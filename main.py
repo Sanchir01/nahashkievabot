@@ -1,24 +1,23 @@
 import os
 from aiogram import Bot,Dispatcher, F
 from aiogram.types import Message
-from aiogram.filters import CommandStart,Command
 from dotenv import dotenv_values,load_dotenv
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from handlers.user_router import user_router
+from commands.commands import commands_router
+
 load_dotenv()
 config = dotenv_values(".env")
 token = Bot(token = os.getenv("TOKEN"))
 
 dp = Dispatcher()
-dp.include_routers(user_router)
-
+dp.include_routers(user_router, commands_router)
 
 class user_data(StatesGroup):
     name = State()
     age = State()
     mood = State()
-
 
 
 @dp.message(F.text == '1')
@@ -55,12 +54,10 @@ async def name(message:Message,state:FSMContext):
     except ValueError:
         await message.answer("Error data")
 
-@dp.message(Command("help"))
-async def cmd_help(message:Message):
-    await message.answer("вы нажали на /help")
+
 
 async def main():
-    await Bot.delete_webhook(drop_pending_updates=True)
+    await token.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(token)
 
 if __name__ == "__main__":
