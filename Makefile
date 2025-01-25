@@ -2,5 +2,5 @@ SILENT:
 PHONY:
 
 
-dev:
+run:
 	python main.py
